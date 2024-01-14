@@ -1,0 +1,37 @@
+.holder__title {
+  font-size: 2rem;
+  font-weight: 500;
+
+  justify-self: center;
+  align-self: center;
+}
+
+.holder__desc {
+  padding: 0px 10px;
+  margin-top: 15px;
+  text-align: justify;
+}
+
+.holder__updates {
+  margin: 20px 0px 10px 0px;
+  align-self: center;
+}
+
+.btn__updates {
+  width: 30%;
+  height: 2rem;
+
+  background-color: #97cae8;
+  color: black;
+  height: 2rem;
+
+  border: 1px solid #844ad7;
+  border-radius: 7px;
+  align-self: center;
+
+  cursor: pointer;
+}
+
+.btn__updates:hover {
+  background-color: #83b0c9;
+}

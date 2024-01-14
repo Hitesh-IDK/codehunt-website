@@ -15,6 +15,8 @@
   display: flex;
   flex-direction: column;
 
+  max-width: 700px;
+
   box-shadow: 0px 0px 15px #844ad7;
 }
 
@@ -48,11 +50,30 @@
   align-self: center;
 }
 
-.btn__spectate {
+.btn {
   background-color: #97cae8;
   color: black;
   height: 2rem;
 
   border: 1px solid #844ad7;
   border-radius: 7px;
+
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #83b0c9;
+}
+
+.btn__login {
+  margin-top: 10px;
+
+  width: 70%;
+  align-self: center;
+}
+
+@media only screen and (max-width: 600px) {
+  .sub__container {
+    max-width: 300px;
+  }
 }
