@@ -1,0 +1,58 @@
+.main__container {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sub__container {
+  border: 1px solid #844ad7;
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0px 0px 15px #844ad7;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.login__container {
+  margin-top: 1rem;
+  color: rgba(240, 248, 255, 0.847);
+}
+
+.inp__login {
+  appearance: none;
+
+  color: aliceblue;
+
+  margin-top: 5px;
+  height: 2rem;
+  background-color: rgb(62, 68, 71);
+  border: 1px solid #161421;
+  border-radius: 7px;
+
+  padding: 0px 5px;
+}
+
+.divider__or {
+  margin: 10px 0px;
+  justify-self: center;
+  align-self: center;
+}
+
+.btn__spectate {
+  background-color: #97cae8;
+  color: black;
+  height: 2rem;
+
+  border: 1px solid #844ad7;
+  border-radius: 7px;
+}

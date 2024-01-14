@@ -1,0 +1,23 @@
+.header__container {
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 40px;
+}
+
+.header__title {
+  font-size: 4rem;
+  font-weight: 600;
+
+  margin-left: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  .header__container {
+    flex-direction: column;
+  }
+
+  .header__title {
+    margin-left: 0;
+  }
+}
