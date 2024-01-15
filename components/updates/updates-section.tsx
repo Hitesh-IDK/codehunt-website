@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import styles from "./updates-section.module.css";
 
-export default function (): JSX.Element {
+export default function ({
+  isLoading,
+  setIsLoading,
+}: {
+  isLoading: boolean;
+  setIsLoading: Dispatch<boolean>;
+}): JSX.Element {
   const [refreshingTextDots, setRefreshingTextDots] = useState("...");
   const [timer, setTimer] = useState("1:00");
 
