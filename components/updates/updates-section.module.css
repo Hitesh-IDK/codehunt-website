@@ -1,0 +1,33 @@
+.refresh__title {
+  font-size: 1.4rem;
+  color: rgba(240, 248, 255, 0.813);
+  align-self: center;
+}
+
+.refresh__timer {
+  margin-top: 4px;
+  align-self: center;
+}
+
+.updates {
+  margin-top: 15px;
+  max-height: 500px;
+
+  overflow: auto;
+}
+
+.update__msg {
+  align-self: center;
+  padding: 10px 0px;
+  border-bottom: 1px solid #97cae8;
+}
+
+.update__msg:last-child {
+  border: none;
+}
+
+@media only screen and (max-width: 600px) {
+  .updates {
+    max-height: 300px;
+  }
+}

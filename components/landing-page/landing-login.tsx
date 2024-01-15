@@ -11,8 +11,9 @@ export default function (): JSX.Element {
           type="password"
           placeholder="Coordinator ID"
         ></input>
+        <button className={`${styles.btn__login} ${styles.btn}`}>Login</button>
       </div>
-      <button className={`${styles.btn__login} ${styles.btn}`}>Login</button>
+
       <div className={styles.divider__or}>or</div>
       <button className={`${styles.btn__spectate} ${styles.btn}`}>
         Spectate
