@@ -41,6 +41,13 @@ export async function POST(
   const reqData: AuthReqData = await req.json();
 
   const client = await MongoClient.connect(driver);
+  if (!client)
+    return NextResponse.json({
+      success: false,
+      message: "Driver issue:" + driver,
+      data: {},
+    });
+
   const coordinator: CoordinatorData | null = (await client
     .db()
     .collection("coordinators")
