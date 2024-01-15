@@ -10,14 +10,21 @@ import {
   invalidCheck,
   validCheck,
 } from "@/components/updates/valid-checkmarks";
+import Cookies from "universal-cookie";
+import { decryptData } from "@/helpers/cryption/cryption-methods";
+import { CoordinatorData } from "@/contexts/login-ctx-provider";
+import { UpdatesReqData } from "@/app/api/updates/route";
 
 export default function ({
   params: { slug },
 }: {
   params: { slug: string[] };
 }): JSX.Element {
+  const cookie = new Cookies(null, { path: __dirname });
+
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -63,10 +70,64 @@ export default function ({
       if (location.reference_id === nextPosition) nextLocation = location;
     });
 
-    if (!prevLocation || !nextLocation) return false;
+    console.log(prevLocation, nextLocation);
 
-    // if(prevLocation)
-    return true;
+    if (prevPosition === 0) {
+      prevLocation = {
+        location_id: 0,
+        reference_id: 0,
+        name: "Starting Point",
+      };
+    }
+
+    console.log(prevLocation);
+
+    if (!nextLocation || !prevLocation) return false;
+
+    if (
+      (nextLocation as LocationData).location_id -
+        (prevLocation as LocationData).location_id ===
+      1
+    )
+      return true;
+
+    return false;
+  };
+
+  const sendUpdates = async (
+    coordinator: CoordinatorData,
+    route: RouteData,
+    batch: string,
+    nextPosition: number
+  ) => {
+    const teamNo =
+      (batch === "A" ? 0 : batch === "B" ? 12 : batch === "C" ? 24 : 36) +
+      route.route_id;
+
+    let locationId = undefined;
+
+    route.location.forEach((loc) => {
+      if (loc.reference_id === nextPosition) locationId = loc.location_id;
+    });
+
+    const reqData: UpdatesReqData = {
+      coordinator,
+      insert_time: Date.now(),
+      message: `Team ${teamNo} has reached checkpoint ${locationId}`,
+    };
+
+    const response = await fetch("/api/updates", {
+      method: "POST",
+      body: JSON.stringify(reqData),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      //TODO -Show some error
+      return;
+    }
   };
 
   const validatePage = async () => {
@@ -74,9 +135,27 @@ export default function ({
       router.push("/");
     }
 
+    const storedCoordinator = cookie.get("Coordinator");
+
+    if (!storedCoordinator) {
+      console.log("Show error");
+      router.push("/");
+      return;
+    }
+
+    const coordinatorJson = decryptData(storedCoordinator);
+    if (!coordinatorJson) {
+      console.log("Show error");
+      router.push("/");
+      return;
+    }
+
+    const coordinatorData: CoordinatorData = JSON.parse(coordinatorJson);
+    console.log(coordinatorData);
+
     const teamCode = slug[0];
-    const lastLocation = slug[1];
-    const nextLocation = slug[2];
+    const lastLocation = Number(slug[1]);
+    const nextLocation = Number(slug[2]);
 
     let msg = "";
 
@@ -85,6 +164,8 @@ export default function ({
 
     const possibleBatches = ["A", "B", "C"];
 
+    if (Number.isNaN(lastLocation) || Number.isNaN(nextLocation))
+      msg = msg + "Invalid Location Ids! ";
     if (!possibleBatches.includes(batch)) msg = msg + "Invalid Batch! ";
     if (Number.isNaN(routeId)) msg = msg + "Invalid Route! ";
     if (!(routeId <= 12 && routeId > 0)) msg += "Route out of bounds! ";
@@ -98,6 +179,14 @@ export default function ({
 
     const route: RouteData | undefined = await getRoute(routeId);
     if (!route) return;
+
+    if (!validatePosition(route, lastLocation, nextLocation)) {
+      return;
+    }
+
+    setIsValid(true);
+
+    await sendUpdates(coordinatorData, route, batch, nextLocation);
   };
 
   useEffect(() => {
@@ -105,21 +194,23 @@ export default function ({
 
     if (!isMounted) return;
 
-    validatePage();
+    setIsLoading(true);
+    validatePage().then(() => {
+      setIsLoading(false);
+    });
   }, [isMounted]);
 
   return (
     <>
       <div className={styles.main__container}>
         <Header />
-        {isMounted && (
+        {isMounted && !isLoading && (
           <div className={styles.sub__container}>
-            {validCheck}
-            {invalidCheck}
+            {isValid ? validCheck : invalidCheck}
           </div>
         )}
 
-        {!isMounted && <div className={styles.loader}></div>}
+        {(!isMounted || isLoading) && <div className={styles.loader}></div>}
       </div>
     </>
   );

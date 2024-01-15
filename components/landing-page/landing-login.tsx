@@ -67,7 +67,7 @@ export default function ({
       return;
     }
 
-    const encryptedData = encryptData(JSON.stringify(resData));
+    const encryptedData = encryptData(JSON.stringify(resData.data));
     cookie.set("Coordinator", encryptedData);
 
     // setUpdateState(true);
