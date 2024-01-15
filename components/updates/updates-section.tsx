@@ -6,12 +6,14 @@ import styles from "./updates-section.module.css";
 export default function ({
   isLoading,
   setIsLoading,
+  time,
 }: {
   isLoading: boolean;
   setIsLoading: Dispatch<boolean>;
+  time: number | undefined;
 }): JSX.Element {
   const [refreshingTextDots, setRefreshingTextDots] = useState("...");
-  const [timer, setTimer] = useState("1:00");
+  const [timer, setTimer] = useState(`0:00`);
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -28,14 +30,19 @@ export default function ({
         }
       });
 
-      setTimer((prevTimer) => {
-        const min = prevTimer.slice(0, 1);
-        const seconds = min === "1" ? 59 : Number(prevTimer.slice(2, 4)) - 1;
+      if (!time) return;
 
-        return `0:${seconds >= 0 ? seconds.toString().padStart(2, "0") : "00"}`;
+      setTimer((prevTimer) => {
+        // const min = prevTimer.slice(0, 1);
+        // const seconds = min === "1" ? 59 : Number(prevTimer.slice(2, 4)) - 1;
+        const seconds = (59 - Math.trunc(((Date.now() - time) % 60000) / 1000))
+          .toString()
+          .padStart(2, "0");
+
+        return `0:${seconds}`;
       });
     }, 1000);
-  }, [isMounted, setRefreshingTextDots]);
+  }, [isMounted, setRefreshingTextDots, time]);
 
   return (
     <>

@@ -8,7 +8,8 @@ import LandingLogin from "./landing-login";
 import LandingPlaceholder from "./landing-placeholder";
 import { CoordinatorData } from "@/contexts/login-ctx-provider";
 import Cookies from "universal-cookie";
-import { decryptData } from "@/helpers/cryption/cryption-methods";
+import { decryptData, encryptData } from "@/helpers/cryption/cryption-methods";
+import { InternalApiResponse } from "@/app/api/auth/route";
 
 export default function (): JSX.Element {
   const cookie = new Cookies(null, { path: "/" });
@@ -19,13 +20,54 @@ export default function (): JSX.Element {
     CoordinatorData | undefined
   >(undefined);
 
+  const [time, setTime] = useState<number | undefined>();
+
   const [updatesActive, setUpdatesActive] = useState(false);
+
+  const getTime = async () => {
+    const storedTime = cookie.get("Time");
+    if (storedTime) {
+      const timeString = decryptData(storedTime);
+
+      if (timeString) {
+        const time = Number(timeString);
+
+        if (!Number.isNaN(time)) {
+          setTime(time);
+          return;
+        }
+      }
+    }
+
+    const response = await fetch("/api/synchronize");
+    const resData: InternalApiResponse = await response.json();
+
+    console.log(resData);
+
+    if (!response.ok) {
+      //TODO - Show some error
+      return;
+    }
+
+    if (!resData.success) {
+      //TODO - Show some error
+      return;
+    }
+
+    const time: number = resData.data.time;
+    setTime(time);
+    cookie.set("Time", encryptData(time.toString()));
+  };
 
   useEffect(() => {
     setIsMounted(true);
     if (!isMounted) return;
 
     if (isLoading) return;
+
+    if (updatesActive) {
+      getTime();
+    }
 
     const storedData = cookie.get("Coordinator");
 
@@ -40,7 +82,7 @@ export default function (): JSX.Element {
 
     const coordinator = JSON.parse(coordinatorJson);
     setCoordinatorData(coordinator);
-  }, [isMounted, isLoading]);
+  }, [isMounted, isLoading, updatesActive]);
 
   return (
     <>
@@ -66,6 +108,7 @@ export default function (): JSX.Element {
               <UpdatesSection
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}
+                time={time}
               />
             )}
           </div>
