@@ -56,6 +56,7 @@ export default function ({
   };
 
   const validatePosition = (
+    coordinator: CoordinatorData,
     route: RouteData,
     prevPosition: number,
     nextPosition: number
@@ -88,8 +89,14 @@ export default function ({
       (nextLocation as LocationData).location_id -
         (prevLocation as LocationData).location_id ===
       1
-    )
-      return true;
+    ) {
+      console.log(coordinator, nextLocation);
+
+      if (
+        (nextLocation as LocationData).reference_id === coordinator.reference_id
+      )
+        return true;
+    }
 
     return false;
   };
@@ -180,7 +187,7 @@ export default function ({
     const route: RouteData | undefined = await getRoute(routeId);
     if (!route) return;
 
-    if (!validatePosition(route, lastLocation, nextLocation)) {
+    if (!validatePosition(coordinatorData, route, lastLocation, nextLocation)) {
       return;
     }
 
@@ -207,6 +214,14 @@ export default function ({
         {isMounted && !isLoading && (
           <div className={styles.sub__container}>
             {isValid ? validCheck : invalidCheck}
+            <button
+              className={styles.btn__home}
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              Home
+            </button>
           </div>
         )}
 

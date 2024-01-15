@@ -23,6 +23,21 @@
   transition: all 220ms ease-in-out;
 }
 
+.btn__home {
+  background-color: #97cae8;
+  color: black;
+  height: 2rem;
+
+  border: 1px solid #844ad7;
+  border-radius: 7px;
+
+  cursor: pointer;
+}
+
+.btn__home:hover {
+  background-color: #83b0c9;
+}
+
 /* HTML: <div class="loader"></div> */
 .loader {
   margin-top: 20px;
