@@ -44,7 +44,7 @@ export async function POST(
   if (!client)
     return NextResponse.json({
       success: false,
-      message: "Driver issue:" + driver,
+      message: "Driver is missing",
       data: {},
     });
 

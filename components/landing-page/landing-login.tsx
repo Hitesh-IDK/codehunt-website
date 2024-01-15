@@ -46,11 +46,13 @@ export default function ({
       coordinator_id: idInput,
     };
 
+    console.log(JSON.stringify(reqData));
+
     const response = await fetch("/api/auth", {
       method: "POSt",
       body: JSON.stringify(reqData),
       headers: {
-        "Content-type": "application/json",
+        "Content-Type": "application/json",
       },
     });
     const resData: InternalApiResponse = await response.json();
