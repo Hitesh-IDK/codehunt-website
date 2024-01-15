@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { InternalApiResponse, MongoUndefinedError } from "../auth/route";
+import { InternalApiResponse } from "../auth/route";
 import { CoordinatorData } from "@/contexts/login-ctx-provider";
 import { MongoClient } from "mongodb";
 
@@ -14,7 +14,12 @@ export async function GET(
   res: NextResponse
 ): Promise<NextResponse<InternalApiResponse>> {
   const driver = process.env.NEXT_PUBLIC_MONGODRIVER;
-  if (!driver) return MongoUndefinedError;
+  if (!driver)
+    return NextResponse.json({
+      success: false,
+      message: "Something went wrong on our side!",
+      data: {},
+    });
 
   const client = await MongoClient.connect(driver);
   const updates: UpdatesReqData[] = (await client
@@ -43,7 +48,12 @@ export async function POST(
   res: NextResponse
 ): Promise<NextResponse<InternalApiResponse>> {
   const driver = process.env.NEXT_PUBLIC_MONGODRIVER;
-  if (!driver) return MongoUndefinedError;
+  if (!driver)
+    return NextResponse.json({
+      success: false,
+      message: "Something went wrong on our side!",
+      data: {},
+    });
 
   const reqData: UpdatesReqData = await req.json();
 

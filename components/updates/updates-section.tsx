@@ -2,6 +2,8 @@
 
 import { Dispatch, useEffect, useState } from "react";
 import styles from "./updates-section.module.css";
+import { InternalApiResponse } from "@/app/api/auth/route";
+import { UpdatesReqData } from "@/app/api/updates/route";
 
 export default function ({
   isLoading,
@@ -14,8 +16,26 @@ export default function ({
 }): JSX.Element {
   const [refreshingTextDots, setRefreshingTextDots] = useState("...");
   const [timer, setTimer] = useState(`0:00`);
+  const [updates, setUpdates] = useState<UpdatesReqData[]>([]);
 
   const [isMounted, setIsMounted] = useState(false);
+
+  const getUpdates = async () => {
+    const response = await fetch("/api/updates");
+    const resData: InternalApiResponse = await response.json();
+
+    if (!response.ok) {
+      //TODO - Show some error
+      return;
+    }
+
+    const updatesData: UpdatesReqData[] = resData.data;
+    const sortedUpdates = updatesData.sort(function (a, b): number {
+      return b.insert_time - a.insert_time;
+    });
+
+    setUpdates(sortedUpdates);
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -32,12 +52,17 @@ export default function ({
 
       if (!time) return;
 
+      const seconds = (59 - Math.trunc(((Date.now() - time) % 60000) / 1000))
+        .toString()
+        .padStart(2, "0");
+
+      if (seconds === "01") {
+        getUpdates();
+      }
+
       setTimer((prevTimer) => {
         // const min = prevTimer.slice(0, 1);
         // const seconds = min === "1" ? 59 : Number(prevTimer.slice(2, 4)) - 1;
-        const seconds = (59 - Math.trunc(((Date.now() - time) % 60000) / 1000))
-          .toString()
-          .padStart(2, "0");
 
         return `0:${seconds}`;
       });
@@ -51,39 +76,26 @@ export default function ({
       </div>
       <div className={styles.refresh__timer}>{timer}</div>
       <div className={styles.updates}>
-        <div className={styles.update__msg}>
-          Team 1 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
-        <div className={styles.update__msg}>
-          Team 5 just cleared the first checkpoint!
-        </div>
+        {updates.length !== 0 ? (
+          updates.map((update) => {
+            return (
+              <div
+                key={update.insert_time}
+                className={styles.updates__sub_container}
+              >
+                <div className={styles.update__msg}>{update.message}</div>
+                <div className={styles.update__time}>
+                  {new Date(update.insert_time).toLocaleTimeString()}
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div key={Date.now()} className={styles.update__msg}>
+            No Updates at the moment! Or wait for the refresh timer to refresh
+            the updates!
+          </div>
+        )}
       </div>
     </>
   );

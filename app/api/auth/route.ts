@@ -1,28 +1,25 @@
 import { CoordinatorData } from "@/contexts/login-ctx-provider";
-import { MongoClient, WithId } from "mongodb";
+import { MongoClient } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface InternalApiResponse {
   success: boolean;
   message: string;
-  data: any;
+  data: Object | any;
 }
 
 export interface AuthReqData {
   coordinator_id: string;
 }
 
-export const MongoUndefinedError: NextResponse<InternalApiResponse> =
-  NextResponse.json({
-    success: false,
-    message: "Something went wrong on our side!",
-    data: {},
-  });
+// export const MongoUndefinedError: NextResponse<InternalApiResponse> =
+//   NextResponse.json({
+//     success: false,
+//     message: "Something went wrong on our side!",
+//     data: {},
+//   });
 
-export async function GET(
-  req: NextRequest,
-  res: NextResponse
-): Promise<NextResponse<InternalApiResponse>> {
+export async function GET(): Promise<NextResponse<InternalApiResponse>> {
   return NextResponse.json({
     success: true,
     message: "Api endpoint is up and running",
@@ -31,11 +28,15 @@ export async function GET(
 }
 
 export async function POST(
-  req: NextRequest,
-  res: NextResponse
+  req: NextRequest
 ): Promise<NextResponse<InternalApiResponse>> {
   const driver = process.env.NEXT_PUBLIC_MONGODRIVER;
-  if (!driver) return MongoUndefinedError;
+  if (!driver)
+    return NextResponse.json({
+      success: false,
+      message: "Something went wrong on our side!",
+      data: {},
+    });
 
   const reqData: AuthReqData = await req.json();
 

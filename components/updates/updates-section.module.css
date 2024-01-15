@@ -16,13 +16,27 @@
   overflow: auto;
 }
 
-.update__msg {
+.updates__sub_container {
+  display: flex;
   align-self: center;
-  padding: 10px 0px;
+  justify-content: space-between;
   border-bottom: 1px solid #97cae8;
+
+  font-size: 0.8rem;
+
+  gap: 20px;
+  padding: 10px 5px;
 }
 
-.update__msg:last-child {
+.update__time {
+  font-size: 0.7rem;
+  color: rgba(240, 248, 255, 0.77);
+}
+
+/* .update__msg {
+} */
+
+.updates__sub_container:last-child {
   border: none;
 }
 

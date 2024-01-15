@@ -3,19 +3,17 @@ import { MongoClient, WithId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import { InternalApiResponse } from "../auth/route";
 
-export const MongoUndefinedError: NextResponse<InternalApiResponse> =
-  NextResponse.json({
-    success: false,
-    message: "Something went wrong on our side!",
-    data: {},
-  });
-
 export async function GET(
   req: NextRequest,
   res: NextResponse
 ): Promise<NextResponse<InternalApiResponse>> {
   const driver = process.env.NEXT_PUBLIC_MONGODRIVER;
-  if (!driver) return MongoUndefinedError;
+  if (!driver)
+    return NextResponse.json({
+      success: false,
+      message: "Something went wrong on our side!",
+      data: {},
+    });
 
   console.log("Request to sync");
 
