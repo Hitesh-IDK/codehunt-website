@@ -49,7 +49,7 @@ export default function ({
     console.log(JSON.stringify(reqData));
 
     const response = await fetch("/api/auth", {
-      method: "POSt",
+      method: "POST",
       body: JSON.stringify(reqData),
       headers: {
         "Content-Type": "application/json",

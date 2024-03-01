@@ -15,8 +15,6 @@ export async function GET(
       data: {},
     });
 
-  console.log("Request to sync");
-
   const client = await MongoClient.connect(driver);
   const data = (
     await client.db().collection("syncrhonize").find().toArray()

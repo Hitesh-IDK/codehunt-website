@@ -12,13 +12,6 @@ export interface AuthReqData {
   coordinator_id: string;
 }
 
-// export const MongoUndefinedError: NextResponse<InternalApiResponse> =
-//   NextResponse.json({
-//     success: false,
-//     message: "Something went wrong on our side!",
-//     data: {},
-//   });
-
 export async function GET(): Promise<NextResponse<InternalApiResponse>> {
   return NextResponse.json({
     success: true,
